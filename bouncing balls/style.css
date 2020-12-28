@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'montserrat';
+    src: url('fonts/Montserrat-Regular.otf') format('otf');
+}
+
 *,
 *:before,
 *:after {
@@ -11,8 +16,57 @@ body {
     height: 100%;
 }
 
-body {
-    display: grid;
-    place-content: center;
+.wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     background-color: #b7c9d5;
+}
+
+#simulation {
+}
+
+#graph {
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+#bar {
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.statistics-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.statistics-wrapper > * {
+    margin: 1rem 0;
+}
+
+.numbers {
+    font-family: 'montserrat';
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.susceptible {
+    color: #538b94;
+}
+
+.infected {
+    color: #9f4c00;
+}
+
+.recovered {
+    color: #96418a;
+}
+
+.dead {
+    color: #050505;
 }

@@ -1,71 +1,112 @@
-const canvas = document.querySelector('canvas');
-const context = canvas.getContext('2d');
+import {
+    balls,
+    susceptible,
+    infected,
+    dead,
+    recovered,
+    collide,
+    bounceoff,
+    drawBalls,
+} from './balls.js';
+import { Engine } from './engine.js';
+import { infect, updateStatus } from './covid19.js';
+import { drawGraph } from './statistics.js';
+import { maps, drawMap } from './maps.js';
 
-canvas.width = 1600 / 2;
-canvas.height = 900 / 2;
+const backgroundColor = '#e0e0e0';
+let time = 0;
 
-class Ball {
-    constructor(x, y, direction) {
-        this.radius = 10;
-        this.speed = 5;
-        this.x = x;
-        this.y = y;
-        this.vx = this.speed * Math.cos(direction);
-        this.vy = this.speed * Math.sin(direction);
+function setup() {
+    for (let ball of balls) {
+        maps.forEach((map) => {
+            if (map.has(ball)) {
+                ball.map = map;
+                map.balls.push(ball);
+            }
+        });
     }
-
-    move() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x > canvas.width - this.radius || this.x < this.radius)
-            this.vx = -this.vx;
-        if (this.y > canvas.height - this.radius || this.y < this.radius)
-            this.vy = -this.vy;
-    }
-}
-
-const balls = [];
-const numballs = 10;
-
-for (let i = 0; i < numballs; i++) {
-    balls.push(
-        new Ball(
-            Math.random() * (canvas.width - 20) + 10,
-            Math.random() * (canvas.height - 20) + 10,
-            Math.random() * 2 * Math.PI
-        )
-    );
-}
-
-function collide(ball1, ball2) {
-    return Math.hypot(ball1.x - ball2.x, ball1.y - ball2.y) < 2 * ball1.radius;
 }
 
 function update() {
-    for (let i = 0; i < balls.length - 1; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-            if (collide(balls[i], balls[j])) {
-                console.log('collide!');
+    for (let ball1 of balls) {
+        for (let ball2 of ball1.map.balls) {
+            if (collide(ball1, ball2)) {
+                if (!ball1.traveling && !ball2.traveling) {
+                    bounceoff(ball1, ball2);
+                    infect(ball1, ball2);
+                }
             }
         }
     }
 
     for (let ball of balls) {
-        ball.move();
+        if (ball.status !== dead) {
+            if (ball.traveling) ball.travel();
+            else {
+                ball.move();
+            }
+
+            updateStatus(ball);
+        }
+
+        if (!ball.traveling) ball.map.collide(ball);
     }
 }
 
 function render() {
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = 'red';
-    for (let ball of balls) {
-        context.beginPath();
-        context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
-        context.fill();
+    buffer.fillStyle = backgroundColor;
+    buffer.fillRect(0, 0, buffer.canvas.width, buffer.canvas.height);
+
+    drawBalls();
+    maps.forEach((map) => drawMap(map));
+
+    context.drawImage(
+        buffer.canvas,
+        0,
+        0,
+        buffer.canvas.width,
+        buffer.canvas.height,
+        0,
+        0,
+        context.canvas.width,
+        context.canvas.height
+    );
+
+    drawGraph(time);
+
+    if (time <= graphBuffer.canvas.width) {
+        graphContext.fillStyle = backgroundColor;
+        graphContext.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+        graphContext.drawImage(
+            graphBuffer.canvas,
+            0,
+            0,
+            time,
+            graphBuffer.canvas.height,
+            0,
+            0,
+            graphContext.canvas.width,
+            graphContext.canvas.height
+        );
     }
+
+    barContext.fillStyle = backgroundColor;
+    barContext.fillRect(0, 0, barCanvas.width, barCanvas.height);
+    barContext.drawImage(
+        barBuffer.canvas,
+        0,
+        0,
+        barBuffer.canvas.width,
+        barBuffer.canvas.height,
+        0,
+        0,
+        barContext.canvas.width,
+        barContext.canvas.height
+    );
+
+    time++;
 }
 
 const engine = new Engine(1000 / 60, update, render);
+setup();
 engine.start();
