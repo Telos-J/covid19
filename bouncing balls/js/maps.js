@@ -1,3 +1,7 @@
+import { updateNumbers } from './statistics.js'
+import { getLast } from './helper.js'
+import { maps } from './parameters.js'
+
 class Map {
     constructor(x, y, width, height) {
         this.x = x;
@@ -6,6 +10,9 @@ class Map {
         this.height = height;
         this.padding = 20;
         this.balls = [];
+        this.selected = false;
+        this.statusData = new StatusData();
+        this.ageData = new AgeData();
     }
 
     has(ball) {
@@ -37,6 +44,14 @@ class Map {
     getBottom() {
         return this.y + this.height - this.padding;
     }
+    
+    getOuterWidth() {
+        return this.getRight() - this.getLeft()
+    }
+    
+    getOuterHeight() {
+        return this.getBottom() - this.getTop()
+    }
 
     collide(ball) {
         if (ball.position.x > this.getRight() - ball.radius) {
@@ -58,15 +73,54 @@ class Map {
     }
 }
 
-function drawMap(map) {
-    buffer.strokeStyle = 'black';
-    buffer.beginPath();
-    buffer.moveTo(map.getLeft(), map.getTop());
-    buffer.lineTo(map.getRight(), map.getTop());
-    buffer.lineTo(map.getRight(), map.getBottom());
-    buffer.lineTo(map.getLeft(), map.getBottom());
-    buffer.lineTo(map.getLeft(), map.getTop());
-    buffer.stroke();
+function drawMaps() {
+    for (let map of maps) {
+        if (map.selected) {
+            buffer.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            buffer.fillRect(map.getLeft(), map.getTop(), map.getOuterWidth(), map.getOuterHeight())
+        }
+
+        buffer.strokeStyle = 'white';
+        buffer.strokeRect(map.getLeft(), map.getTop(), map.getOuterWidth(), map.getOuterHeight())
+    }
+}
+
+function selectMap() {
+    for (let map of maps) {
+        if (mousePos.x > map.getLeft() && mousePos.x < map.getRight() && mousePos.y > map.getTop() && mousePos.y < map.getBottom()) {
+            document.body.style.cursor = 'pointer'
+            maps.map((map) => map.selected = false)
+            map.selected = true;
+            break;
+        } else {
+            document.body.style.cursor = 'default'
+            maps.map((map) => map.selected = false)
+        }
+    }
+}
+
+function clickMap() {
+    for (let map of maps) {
+        if (mousePos.x > map.getLeft() && mousePos.x < map.getRight() && mousePos.y > map.getTop() && mousePos.y < map.getBottom()) {
+            statusChart.data = map.statusData;
+            statusChart.update({ duration: 0 });
+            ageChart.data = map.ageData;
+            ageChart.update({ duration: 0 })
+            break;
+        } else {
+            statusChart.data = globalStatusData;
+            statusChart.update({ duration: 0 });
+            ageChart.data = globalAgeData;
+            ageChart.update({ duration: 0 })
+        }
+    }
+
+    updateNumbers(
+        getLast(statusChart.data.datasets[0].data),
+        getLast(statusChart.data.datasets[1].data),
+        getLast(statusChart.data.datasets[2].data),
+        getLast(statusChart.data.datasets[3].data)
+    )
 }
 
 const fullMaps = [new Map(0, 0, buffer.canvas.width, buffer.canvas.height)];
@@ -183,6 +237,4 @@ const octaMaps = [
     ),
 ];
 
-const maps = doubleMaps;
-
-export { maps, drawMap };
+export { fullMaps, doubleMaps, quarterMaps, hexaMaps, octaMaps, drawMaps, selectMap, clickMap };

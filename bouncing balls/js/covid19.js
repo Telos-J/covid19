@@ -1,11 +1,8 @@
 import { balls, susceptible, infected, recovered, dead } from './balls.js';
-import { maps } from './maps.js';
+import { maps } from './parameters.js';
+import { inwardPro, outwardPro, infectionR, travelProb } from './parameters.js'
 
-const timeStep = 2;
-const inwardPro = 0.25;
-const outwardPro = 0.5;
-const infectionR = 0.5;
-const travelProb = 0.001;
+const timeStep = 5;
 
 export function infect(ball1, ball2) {
     if (ball1.status === infected && ball2.status === susceptible) {
@@ -55,7 +52,7 @@ export function infect(ball1, ball2) {
 }
 
 export function updateStatus(ball) {
-    if (ball.status === infected) {
+    if (ball.status === infected && !ball.traveling) {
         ball.timeInfected++;
 
         if (ball.timeInfected > 60 * timeStep * 2) {
@@ -69,7 +66,7 @@ export function updateStatus(ball) {
                 if (randomNum < 0.001) ball.status = dead;
             } else if (ball.age < 70) {
                 if (randomNum < 0.01) ball.status = dead;
-            } else if (ball.age >= 70) {
+            } else {
                 if (randomNum < 0.2) ball.status = dead;
             }
         }
@@ -77,15 +74,20 @@ export function updateStatus(ball) {
 
     if (!ball.traveling) {
         if (Math.random() < travelProb) {
+            const mapChoices = maps.filter((map) => map !== ball.map)
             const idx = Math.floor(
-                Math.random() * maps.filter((map) => map !== ball.map).length
+                Math.random() * mapChoices.length
             );
-            const randomMap = maps[idx];
+            const randomMap = mapChoices[idx];
             ball.destination.set(
                 randomMap.x + Math.random() * randomMap.width,
                 randomMap.y + Math.random() * randomMap.height
             );
+            ball.velocity = ball.destination.sub(ball.position).normalize(ball.travelspeed)
+            ball.map.balls = ball.map.balls.filter((otherBall) => otherBall !== ball)
+            ball.map = randomMap;
             ball.traveling = true;
+            randomMap.balls.push(ball)
         }
     }
 }

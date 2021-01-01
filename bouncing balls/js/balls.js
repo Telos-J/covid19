@@ -1,19 +1,16 @@
 import { Vector2, angleToVector, vectorToAngle } from './vector.js';
+import { numballs, probInfected, probMask } from  './parameters.js';
 
-const susceptible = '#538B94';
-const infected = '#9F4C00';
+const susceptible = '#36CFB6';
+const infected = '#FF2836';
 const recovered = '#96418A';
-const dead = '#050505';
-
-const numballs = 1000;
-const probInfected = 0.05;
-const probMask = 0;
+const dead = '#002632';
 
 class Ball {
     constructor(x, y, direction, status, mask, age) {
         this.radius = 5;
         this.speed = 3;
-        this.travelspeed = 6;
+        this.travelspeed = 30;
         this.position = new Vector2(x, y);
         this.velocity = new Vector2(
             this.speed * Math.cos(direction),
@@ -29,15 +26,10 @@ class Ball {
 
     move() {
         this.position = this.position.add(this.velocity);
-    }
-
-    travel() {
-        this.position = this.position.add(
-            this.destination.sub(this.position).normalize(this.travelspeed)
-        );
-
-        if (this.position.sub(this.destination).magnitude() < this.travelspeed)
+        if (this.traveling && this.position.sub(this.destination).magnitude() < this.travelspeed) {
             this.traveling = false;
+            this.velocity = this.velocity.normalize(this.speed)
+        }
     }
 }
 
