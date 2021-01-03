@@ -7,7 +7,7 @@ import {
     drawBalls,
 } from './balls.js';
 
-import { maps } from './parameters.js';
+import { maps, ageProbs } from './parameters.js';
 import { incrementLast, getLast, getSecondLast} from './helper.js'
 
 function updateNumbers(numInfected, numSusceptable, numDead, numRecovered) {
@@ -18,15 +18,27 @@ function updateNumbers(numInfected, numSusceptable, numDead, numRecovered) {
 }
 
 function initializeDatasets(t) {
+    // Initialize GlobalData
     globalStatusData.labels.push(t)
-    globalAgeData.datasets[0].data = [0, 0, 0]
+
+    globalAgeData.labels = [];
+    for (let ageProb of ageProbs) 
+        globalAgeData.labels.push(ageProb[0][0] + '~' + ageProb[0][1])
+
+    globalAgeData.datasets[0].data = new Array(ageProbs.length).fill(0);
 
     for (let dataset of globalStatusData.datasets) 
         dataset.data.push(0)
 
+    // Initialize MapData
     for (let map of maps) { 
         map.statusData.labels.push(t)
-        map.ageData.datasets[0].data = [0, 0, 0]
+
+        map.ageData.labels = [];
+        for (let ageProb of ageProbs) 
+            map.ageData.labels.push(ageProb[0][0] + '~' + ageProb[0][1])
+
+        map.ageData.datasets[0].data = new Array(ageProbs.length).fill(0);
 
         for (let dataset of map.statusData.datasets) 
             dataset.data.push(0)
@@ -50,18 +62,12 @@ export function updateStatistics(t) {
                 case dead:
                     incrementLast(globalStatusData.datasets[2].data)
                     incrementLast(ball.map.statusData.datasets[2].data)
-                    if (ball.age < 50) {
-                        globalAgeData.datasets[0].data[0]++
-                        ball.map.ageData.datasets[0].data[0]++
-                    }
-                    else if (ball.age < 70) {
-                        globalAgeData.datasets[0].data[1]++
-                        ball.map.ageData.datasets[0].data[1]++
-                    }
-                    else {
-                        globalAgeData.datasets[0].data[2]++
-                        ball.map.ageData.datasets[0].data[2]++
-                    } 
+                    ageProbs.forEach((ageProb, idx) => {
+                        if (ball.age > ageProb[0][0] && ball.age < ageProb[0][1]) {
+                            globalAgeData.datasets[0].data[idx]++
+                            ball.map.ageData.datasets[0].data[idx]++
+                        }
+                    })
                     break;
                 case recovered:
                     incrementLast(globalStatusData.datasets[3].data)

@@ -1,5 +1,5 @@
 import { balls, susceptible, infected, recovered, dead } from './balls.js';
-import { maps } from './parameters.js';
+import { maps, ageProbs } from './parameters.js';
 import { inwardPro, outwardPro, infectionR, travelProb } from './parameters.js'
 
 const timeStep = 5;
@@ -55,20 +55,13 @@ export function updateStatus(ball) {
     if (ball.status === infected && !ball.traveling) {
         ball.timeInfected++;
 
-        if (ball.timeInfected > 60 * timeStep * 2) {
+        if (ball.timeInfected > 60 * timeStep * 2) 
             ball.status = recovered;
-        }
 
         if (ball.timeInfected > 60 * timeStep && ball.status !== recovered) {
-            const randomNum = Math.random();
-
-            if (ball.age < 50) {
-                if (randomNum < 0.001) ball.status = dead;
-            } else if (ball.age < 70) {
-                if (randomNum < 0.01) ball.status = dead;
-            } else {
-                if (randomNum < 0.2) ball.status = dead;
-            }
+            for (let ageProb of ageProbs)
+                if (ball.age > ageProb[0][0] && ball.age < ageProb[0][1])
+                    if (Math.random() < ageProb[1]) ball.status = dead
         }
     }
 
