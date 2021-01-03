@@ -16,4 +16,4 @@ export const ageProbs = [
     [[71, 100], 0.2]
 ];
 
-export const maps = octaMaps; // Map Layout
+export const maps = fullMaps; // Map Layout

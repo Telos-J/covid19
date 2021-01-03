@@ -65,7 +65,7 @@ export function updateStatus(ball) {
         }
     }
 
-    if (!ball.traveling) {
+    if (!ball.traveling && maps.length > 1) {
         if (Math.random() < travelProb) {
             const mapChoices = maps.filter((map) => map !== ball.map)
             const idx = Math.floor(
