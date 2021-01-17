@@ -11,6 +11,72 @@ body {
     height: 100%;
 }
 
+.header {
+    position: absolute;
+    padding: 3vw;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.control-icon {
+    width: 20px;
+    cursor: pointer;
+}
+
+.info-icon {
+    width: 20px; 
+    cursor: pointer;
+}
+
+.tooltip {
+    position: relative;
+    padding-left: 20px;
+}
+
+.tooltip:before {
+    content: attr(data-text); /* here's the magic */
+    position: absolute;
+    
+    top: 35px;
+    right: -20px;
+    
+    /* basic styles */
+    width: 250px;
+    padding:10px;
+    border-radius:10px;
+    background:#fff;
+    color: #000;
+    text-align:center;
+    font-family: 'montserrat';
+    font-weight: 300;
+    font-size: 10px;
+  
+    display:none; /* hide by default */
+}
+  
+.tooltip:hover:before {
+    display:block;
+}
+
+.tooltip:after {
+    content: "";
+    position:absolute;
+    
+    /* position tooltip correctly */
+    top: 20px;
+    right: 3px;
+   
+    /* the arrow */
+    border: 8px solid white;
+    border-color: transparent transparent white transparent ;
+    
+    display:none;
+  }
+  .tooltip:hover:before, .tooltip:hover:after {
+    display:block;
+  }
+    
 .wrapper {
     height: 100%;
     display: flex;
@@ -19,6 +85,10 @@ body {
     background-color: #274754 /*#b7c9d5;*/
 }
 
+#simulation {
+    width: 70vw;
+    height: 35vw;
+}
 
 .statistics-wrapper {
     display: flex;
@@ -32,6 +102,7 @@ body {
 .numbers {
     font-family: 'montserrat';
     font-weight: 600;
+    font-style: italic;
     margin: 1rem
 }
 
@@ -54,4 +125,16 @@ body {
 
 .dead {
     color: #002632
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    
+    #simulation {
+        width: 100vw;
+        height: 50vw;
+    }
 }

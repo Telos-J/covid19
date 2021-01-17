@@ -1,6 +1,7 @@
-import { balls, susceptible, infected, recovered, dead } from './balls.js';
-import { maps, ageProbs } from './parameters.js';
-import { inwardPro, outwardPro, infectionR, travelProb } from './parameters.js'
+import { susceptible, infected, recovered, dead } from './balls.js';
+import { ageProbs } from './parameters.js';
+import { inwardPro, outwardPro, infectionR} from './parameters.js'
+import { maps, balls} from './app.js'
 
 const timeStep = 5;
 
@@ -66,7 +67,7 @@ export function updateStatus(ball) {
     }
 
     if (!ball.traveling && maps.length > 1) {
-        if (Math.random() < travelProb) {
+        if (Math.random() < ball.travelProb) {
             const mapChoices = maps.filter((map) => map !== ball.map)
             const idx = Math.floor(
                 Math.random() * mapChoices.length

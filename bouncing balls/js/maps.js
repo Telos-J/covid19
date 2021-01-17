@@ -1,6 +1,6 @@
 import { updateNumbers } from './statistics.js'
 import { getLast } from './helper.js'
-import { maps } from './parameters.js'
+import { maps, globalStatusData, globalAgeData } from './app.js'
 
 class Map {
     constructor(x, y, width, height) {
@@ -73,7 +73,125 @@ class Map {
     }
 }
 
-function drawMaps() {
+function createMaps(type) {
+    if (type === "full")
+        return [
+            new Map(0, 0, buffer.canvas.width, buffer.canvas.height)];
+    else if (type === "double")
+        return [
+            new Map(0, 0, buffer.canvas.width / 2, buffer.canvas.height),
+            new Map(
+                buffer.canvas.width / 2,
+                0,
+                buffer.canvas.width / 2,
+                buffer.canvas.height
+            ),
+        ];
+    else if (type === "quarter")
+        return [
+            new Map(0, 0, buffer.canvas.width / 2, buffer.canvas.height / 2),
+            new Map(
+                buffer.canvas.width / 2,
+                0,
+                buffer.canvas.width / 2,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                0,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 2,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                buffer.canvas.width / 2,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 2,
+                buffer.canvas.height / 2
+            ),
+        ];
+    else if (type === "hexa")
+        return [
+            new Map(0, 0, buffer.canvas.width / 3, buffer.canvas.height / 2),
+            new Map(
+                buffer.canvas.width / 3,
+                0,
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 2) / 3,
+                0,
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                0,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 2) / 3,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 3,
+                buffer.canvas.height / 2
+            ),
+        ];
+    else if (type === "octa")
+        return [
+            new Map(0, 0, buffer.canvas.width / 4, buffer.canvas.height / 2),
+            new Map(
+                buffer.canvas.width / 4,
+                0,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 2) / 4,
+                0,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 3) / 4,
+                0,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                0,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 2) / 4,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+            new Map(
+                (buffer.canvas.width * 3) / 4,
+                buffer.canvas.height / 2,
+                buffer.canvas.width / 4,
+                buffer.canvas.height / 2
+            ),
+        ];
+}
+
+function drawMaps(maps) {
     for (let map of maps) {
         if (map.selected) {
             buffer.fillStyle = 'rgba(0, 0, 0, 0.2)';
@@ -123,118 +241,4 @@ function clickMap() {
     )
 }
 
-const fullMaps = [new Map(0, 0, buffer.canvas.width, buffer.canvas.height)];
-
-const doubleMaps = [
-    new Map(0, 0, buffer.canvas.width / 2, buffer.canvas.height),
-    new Map(
-        buffer.canvas.width / 2,
-        0,
-        buffer.canvas.width / 2,
-        buffer.canvas.height
-    ),
-];
-
-const quarterMaps = [
-    new Map(0, 0, buffer.canvas.width / 2, buffer.canvas.height / 2),
-    new Map(
-        buffer.canvas.width / 2,
-        0,
-        buffer.canvas.width / 2,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        0,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 2,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        buffer.canvas.width / 2,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 2,
-        buffer.canvas.height / 2
-    ),
-];
-
-const hexaMaps = [
-    new Map(0, 0, buffer.canvas.width / 3, buffer.canvas.height / 2),
-    new Map(
-        buffer.canvas.width / 3,
-        0,
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 2) / 3,
-        0,
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        0,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 2) / 3,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 3,
-        buffer.canvas.height / 2
-    ),
-];
-
-const octaMaps = [
-    new Map(0, 0, buffer.canvas.width / 4, buffer.canvas.height / 2),
-    new Map(
-        buffer.canvas.width / 4,
-        0,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 2) / 4,
-        0,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 3) / 4,
-        0,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        0,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 2) / 4,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-    new Map(
-        (buffer.canvas.width * 3) / 4,
-        buffer.canvas.height / 2,
-        buffer.canvas.width / 4,
-        buffer.canvas.height / 2
-    ),
-];
-
-export { fullMaps, doubleMaps, quarterMaps, hexaMaps, octaMaps, drawMaps, selectMap, clickMap };
+export { createMaps, drawMaps, selectMap, clickMap };

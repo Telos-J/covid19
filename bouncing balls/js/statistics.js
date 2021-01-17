@@ -1,14 +1,13 @@
 import {
-    balls,
     susceptible,
     infected,
     recovered,
     dead,
-    drawBalls,
 } from './balls.js';
 
-import { maps, ageProbs } from './parameters.js';
+import { ageProbs } from './parameters.js';
 import { incrementLast, getLast, getSecondLast} from './helper.js'
+import { maps, balls, globalStatusData, globalAgeData } from './app.js'
 
 function updateNumbers(numInfected, numSusceptable, numDead, numRecovered) {
     document.querySelector('.susceptible .data').innerHTML = numSusceptable;
@@ -83,6 +82,11 @@ export function updateStatistics(t) {
             getLast(statusChart.data.datasets[3].data)
         )
         statusChart.update()
+
+        ageProbs.forEach((ageProb, idx) => {
+            globalAgeData.datasets[0].data[idx] /= balls.filter((ball) => ball.age > ageProb[0][0] && ball.age < ageProb[0][1] ).length
+            for (const map of maps) map.ageData.datasets[0].data[idx] /= balls.filter((ball) => ball.age > ageProb[0][0] && ball.age < ageProb[0][1] ).length
+        });
         ageChart.update()
     }
 }

@@ -4,10 +4,35 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Bouncing Balls</title>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;1,600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
+        <div class="header">
+            <div class="tooltip" data-text="
+                Click this icon to generate a new scenario with random map divisions, number of agents, 
+                number of initial infectants, number of mask wearers, and probability to travel. 
+            ">
+            <svg class="control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M490.667,405.333h-56.811C424.619,374.592,396.373,352,362.667,352s-61.931,22.592-71.189,53.333H21.333C9.557,405.333,0,414.891,0,426.667S9.557,448,21.333,448h270.144c9.237,30.741,37.483,53.333,71.189,53.333s61.931-22.592,71.189-53.333h56.811c11.797,0,21.333-9.557,21.333-21.333S502.464,405.333,490.667,405.333z M362.667,458.667c-17.643,0-32-14.357-32-32s14.357-32,32-32s32,14.357,32,32S380.309,458.667,362.667,458.667z" fill="#ffffff"/>
+                <path d="M490.667,64h-56.811c-9.259-30.741-37.483-53.333-71.189-53.333S300.736,33.259,291.477,64H21.333C9.557,64,0,73.557,0,85.333s9.557,21.333,21.333,21.333h270.144C300.736,137.408,328.96,160,362.667,160s61.931-22.592,71.189-53.333h56.811c11.797,0,21.333-9.557,21.333-21.333S502.464,64,490.667,64z M362.667,117.333c-17.643,0-32-14.357-32-32c0-17.643,14.357-32,32-32s32,14.357,32,32C394.667,102.976,380.309,117.333,362.667,117.333z" fill="#ffffff"/>
+                <path d="M490.667,234.667H220.523c-9.259-30.741-37.483-53.333-71.189-53.333s-61.931,22.592-71.189,53.333H21.333C9.557,234.667,0,244.224,0,256c0,11.776,9.557,21.333,21.333,21.333h56.811c9.259,30.741,37.483,53.333,71.189,53.333s61.931-22.592,71.189-53.333h270.144c11.797,0,21.333-9.557,21.333-21.333C512,244.224,502.464,234.667,490.667,234.667zM149.333,288c-17.643,0-32-14.357-32-32s14.357-32,32-32c17.643,0,32,14.357,32,32S166.976,288,149.333,288z" fill="#ffffff"/>
+            </svg>
+            </div>
+            <div class="tooltip" data-text="
+                COVID-19 is a new type of infectious respiratory disease that has affected our lives enormously. 
+                In this project we make our own attempt to simulate the spread of COVID-19 in hopes of understanding the spread of the pandemic.
+                The data is divided into three sections. The top section shows the current number of susceptible, infected, dead and recovered agents.
+                The middle section shows the curve of infectants as time progresses. The bottom section show the current mortality rate of each age group.
+            ">
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 330">
+                <path d="M165,0C74.019,0,0,74.02,0,165.001C0,255.982,74.019,330,165,330s165-74.018,165-164.999C330,74.02,255.981,0,165,0zM165,300c-74.44,0-135-60.56-135-134.999C30,90.562,90.56,30,165,30s135,60.562,135,135.001C300,239.44,239.439,300,165,300z" fill="#ffffff"/>
+                <path d="M164.998,70c-11.026,0-19.996,8.976-19.996,20.009c0,11.023,8.97,19.991,19.996,19.991c11.026,0,19.996-8.968,19.996-19.991C184.994,78.976,176.024,70,164.998,70z" fill="#ffffff"/>
+                <path d="M165,140c-8.284,0-15,6.716-15,15v90c0,8.284,6.716,15,15,15c8.284,0,15-6.716,15-15v-90C180,146.716,173.284,140,165,140z" fill="#ffffff"/>
+            </svg>
+            </div>
+        </div>
         <div class="wrapper">
             <canvas id="simulation"></canvas>
             <div class="statistics-wrapper">

@@ -1,5 +1,5 @@
 import { Vector2, angleToVector, vectorToAngle } from './vector.js';
-import { numballs, probInfected, probMask } from  './parameters.js';
+import { probInfected, probMask, travelProb } from  './parameters.js';
 
 const susceptible = '#36CFB6';
 const infected = '#FF2836';
@@ -7,8 +7,8 @@ const recovered = '#96418A';
 const dead = '#002632';
 
 class Ball {
-    constructor(x, y, direction, status, mask, age) {
-        this.radius = 5;
+    constructor(x, y, direction, status, mask, age, travelProb) {
+        this.radius = 10;
         this.speed = 3;
         this.travelspeed = 30;
         this.position = new Vector2(x, y);
@@ -21,6 +21,7 @@ class Ball {
         this.timeInfected = 0;
         this.age = age;
         this.traveling = false;
+        this.travelProb = travelProb;
         this.destination = new Vector2();
     }
 
@@ -33,20 +34,26 @@ class Ball {
     }
 }
 
-const balls = [];
+function createBalls(numballs, probInfected, probMask, travelProb) {
+    const balls = [];
 
-for (let i = 0; i < numballs; i++) {
-    balls.push(
-        new Ball(
-            Math.random() * (buffer.canvas.width - 20) + 10,
-            Math.random() * (buffer.canvas.height - 20) + 10,
-            Math.random() * 2 * Math.PI,
-            Math.random() < probInfected ? infected : susceptible,
-            Math.random() < probMask ? true : false,
-            parseInt(Math.random() * 100)
-        )
-    );
+    for (let i = 0; i < numballs; i++) {
+        balls.push(
+            new Ball(
+                Math.random() * (buffer.canvas.width - 20) + 10,
+                Math.random() * (buffer.canvas.height - 20) + 10,
+                Math.random() * 2 * Math.PI,
+                Math.random() < probInfected ? infected : susceptible,
+                Math.random() < probMask ? true : false,
+                parseInt(Math.random() * 100),
+                travelProb
+            )
+        );
+    }
+
+    return balls;
 }
+
 
 function collide(ball1, ball2) {
     return ball1.position.sub(ball2.position).magnitude() < 2 * ball1.radius;
@@ -63,7 +70,7 @@ function bounceoff(ball1, ball2) {
     ball2.position = m.add(n2.scale(ball2.radius));
 }
 
-function drawBalls() {
+function drawBalls(balls) {
     for (let ball of balls) {
         buffer.fillStyle = ball.status;
         buffer.beginPath();
@@ -78,11 +85,11 @@ function drawBalls() {
 }
 
 export {
-    balls,
     susceptible,
     infected,
     recovered,
     dead,
+    createBalls,
     collide,
     bounceoff,
     drawBalls,

@@ -10,24 +10,11 @@ buffer.canvas.width = 1600;
 buffer.canvas.height = 900;
 
 function resize() {
-    let width = window.innerWidth * 0.7;
-    let height = window.innerHeight * 0.7;
-    const ratio = 9 / 16;
-
-    if (height / width > ratio) {
-        height = width * ratio;
-    } else {
-        width = height / ratio;
-    }
-
-    // Set display size (css pixels).
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-
     // Set actual size in memory (scaled to account for extra pixel density).
     const scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
-    canvas.width = width * scale;
-    canvas.height = height * scale;
+    const cssObj = window.getComputedStyle(canvas, null)
+    canvas.width = parseInt(cssObj.getPropertyValue('width')) * scale;
+    canvas.height = parseInt(cssObj.getPropertyValue('height')) * scale;
 }
 
 function handleMouseMove (event) {
@@ -119,12 +106,8 @@ class AgeData {
     }
 }
 
-const globalStatusData = new StatusData()
-const globalAgeData = new AgeData()
-
 const statusChart = new Chart(graphContext, {
     type: 'line',
-    data: globalStatusData,
     options : {
         responsive: true,
         legend: {
@@ -160,7 +143,6 @@ const statusChart = new Chart(graphContext, {
 
 const ageChart = new Chart(barContext, {
     type: 'horizontalBar',
-    data: globalAgeData,
     options: {
         elements: {
             rectangle: {
